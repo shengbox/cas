@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-
 	"github.com/golang/glog"
 )
 
@@ -12,6 +11,8 @@ import (
 type BeegoCASData struct {
 	userName    string
 	displayName string
+	role        string
+	userInfo    string
 }
 
 func (bcd *BeegoCASData) GetUserName() string {
@@ -20,6 +21,14 @@ func (bcd *BeegoCASData) GetUserName() string {
 
 func (bcd *BeegoCASData) GetDisplayName() string {
 	return bcd.displayName
+}
+
+func (bcd *BeegoCASData) GetRole() string {
+	return bcd.role
+}
+
+func (bcd *BeegoCASData) GetUserInfo() string {
+	return bcd.userInfo
 }
 
 // http.Handler的ServeHTTP方法封装在beego内部，cas.v1仅对外部开放ServeHTTP(上面的方法)，不满足需求
@@ -53,9 +62,13 @@ func ServeBeego(w http.ResponseWriter, r *http.Request, c *Client) *BeegoCASData
 	}
 
 	displayName, _ := url.QueryUnescape(Attributes(r).Get("displayName"))
+	role, _ := url.QueryUnescape(Attributes(r).Get("role"))
+	userInfo, _ := url.QueryUnescape(Attributes(r).Get("userInfo"))
 	return &BeegoCASData{
 		userName:    Username(r),
 		displayName: displayName,
+		role:  role,
+		userInfo:  userInfo,
 	}
 }
 
